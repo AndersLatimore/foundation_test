@@ -8,6 +8,7 @@
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/modernizr/modernizr.js"></script>
     <script src="http://malsup.github.com/jquery.form.js"></script>
+    <script src="js/jquery.validate.min.js"></script>
     <?php
        // Report all PHP errors (see changelog)
       error_reporting(E_ALL);
@@ -40,6 +41,7 @@
 
       <!-- Left Nav Section -->
       <ul class="left">
+        <li><a href="#">Back to Andyweb</a></li>
         <li><a href="#">Left Nav Button</a></li>
       </ul>
     </section>
@@ -47,6 +49,7 @@
 
   <div class="magellan" data-magellan-expedition="fixed">
     <dl class="sub-nav">
+      <dd data-magellan-arrival="php-form"><a href="#first-panel">Form Validation Example</a></dd>
       <dd data-magellan-arrival="first-panel"><a href="#first-panel">First panel</a></dd>
       <dd data-magellan-arrival="first-normal-div"><a href="#first-normal-div">First normal div</a></dd>
       <dd data-magellan-arrival="build"><a href="#build">Build with HTML</a></dd>
@@ -64,10 +67,10 @@
     </div>
 
     <?php
-      // define variables and set to empty values
+      // define variables and set to empty values 
       $nameErr = "Name is required and must be a string.";
       $emailErr = "An email address is required.";
-      $name = $email = $comment = "";
+      $name = $email = $comment = $gender = "";
 
       if ($_SERVER["REQUEST_METHOD"] == "POST") {
          if (empty($_POST["name"])) {
@@ -90,6 +93,12 @@
            }
          }
 
+        if (empty($_POST["gender"])) {
+           $gender = "";
+         } else {
+           $gender = test_input($_POST["gender"]);
+         }
+
          if (empty($_POST["comment"])) {
            $comment = "";
          } else {
@@ -103,29 +112,49 @@
          $data = htmlspecialchars($data);
          return $data;
       }
-      ?>
+      
+      ?> 
 
       <div class="row" id="php-form">
         <div class="12-large columns">
-          <h2>Form Validation Example</h2>
+          <h2 data-magellan-destination="php-form">Form Validation Example</h2>
           <form data-abide id="myForm" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>"> 
-            <fieldset>
-              <legend>Form Field</legend>
-                <label>Your name <small>required</small>
-                  <input type="text" name="name" value="<?php echo $name;?>" required pattern="[a-zA-Z]+">
-                </label>
-                <small class="error"><?php echo $nameErr;?></small>
-               
-               <label>Email <small>required</small>
-                  <input type="email" name="email" value="<?php echo $email;?>" required>
-                </label> 
-                <small class="error"><?php echo $emailErr;?></small>
-               Comment: <textarea name="comment" rows="5" cols="40"><?php echo $comment;?></textarea>
-              <button type="submit" name="submit" value="Submit">Submit</button>
-             </fieldset>
+                <fieldset>
+                  <legend>Please provide your name, email address (won't be published) and a comment</legend>
+                  <p>
+                    <label for="cname">Name (required, at least 2 characters)</label>
+                    <input id="cname" name="name" minlength="2" type="text" placeholder="John Doe" required>
+                  </p>
+                  <p>
+                    <label for="cemail">E-Mail (required)</label>
+                    <input id="cemail" type="email" name="email" placeholder="email@mail.com" required>
+                  </p>
+                  <p>
+                    <label for="curl">URL (optional)</label>
+                    <input id="curl" type="url" name="url" placeholder="http://www.website.com">
+                  </p>
+                  <p>
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender" title="Please select your gender" required>
+                      <option value="" selected="selected"></option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Trans">Trans</option>
+                    </select>
+                  </p>
+                  <p>
+                    <label for="ccomment">Your comment (required)</label>
+                    <textarea id="ccomment" name="comment" required></textarea>
+                  </p>
+                  <p>
+                    <button class="submit" type="submit" value="Submit">Submit</button>
+                  </p>
+                </fieldset>
           </form>
 
-          <a href="#" data-reveal-id="myModal">See your input</a>
+          <div class="panel">
+            <a href="#" data-reveal-id="myModal">See your input</a>
+          </div>
 
           <div id="myModal" class="reveal-modal" data-reveal>
             <h2>Awesome. I have it.</h2>
@@ -135,6 +164,8 @@
                 echo $name;
                 echo "<br>";
                 echo $email;
+                echo "<br>";
+                echo $gender;
                 echo "<br>";
                 echo $comment;
               ?>
